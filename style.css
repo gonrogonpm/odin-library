@@ -1,10 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 :root {
-    --library-gap: 20px;
-    --book-corner: 20px;
-    --read: #4c9e52;
-    --not-read: #e5534b;
+    --background: #151b23;
+    --buttons-radius: 10px;
+    --success: #4c9e52;
+    --failure: #e5534b;
+    --card-gap: 20px;
+    --card-radius: 20px;
+    --card-border: #30363d;
+    --card-background: #212830;
+    --card-hover: #2f3742;
+    --card-color: #d1d7e0;
+    --card-shadow: rgba(0, 0, 0, 0.2);
 }
 
 * {
@@ -16,19 +23,40 @@
 body {
     font-family: "Roboto", sans-serif;
     font-size: 16px;
-    background-color: #151b23;
-    color: #d1d7e0;
+    background-color: var(--background);
+    color: var(--card-color);
+}
+
+button {
+    background-color: var(--card-background);
+    border: 1px solid var(--card-border);
+    border-radius: var(--buttons-radius);
+    color: var(--card-color);
+    font-weight: bold;
+    padding: 0.4rem 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+button:hover {
+    background-color: var(--card-hover);
+    cursor: pointer;
+}
+
+button svg {
+    fill: var(--card-color);
 }
 
 .container {
     max-width: 1400px;
-    padding-left: var(--library-gap);
-    padding-right: var(--library-gap);
+    padding-left: var(--card-gap);
+    padding-right: var(--card-gap);
     margin: auto;
 }
 
 .logo {
-    padding: 2em 0;
+    margin: 2em 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -38,26 +66,36 @@ body {
 .logo svg {
     width: 50px;
     height: 50px;
-    fill: #e5ebf5;
+    fill: var(--card-color);
 }
 
 .logo h1 {
-    color: #e5ebf5;
     font-size: 2.4rem;
+}
+
+.nav {
+    margin: var(--card-gap) 0;
+    display: flex;
+    justify-content: end;
+    border-top: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+    padding: 0.8rem 0;
 }
 
 #library {
     --min-card-width: 240px;
-    --max-card-width: calc(25% - var(--library-gap));
+    --max-card-width: calc(25% - var(--card-gap));
 
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(max(var(--min-card-width), var(--max-card-width)), 1fr));
-    gap: var(--library-gap);
+    gap: var(--card-gap);
 }
 
 .book {
-    background-color: #212830;
-    border-radius: var(--book-corner);
+    background-color: var(--card-background);
+    border: 1px solid var(--card-border);
+    box-shadow: 4px 4px 2px 0 var(--card-shadow);
+    border-radius: var(--card-radius);
     padding: 1.5rem 2rem;
 }
 
@@ -72,7 +110,7 @@ body {
 
 .book .info {
     display: flex;
-    border-top: 1px solid #363e48;
+    border-top: 1px solid var(--card-border);
     padding-top: 1rem;
     margin-top: 1rem;
 }
@@ -81,10 +119,10 @@ body {
     flex-grow: 1;
 }
 
-.book .read {
-    color: var(--read); 
+.success {
+    color: var(--success); 
 }
 
-.book .not-read {
-    color: var(--not-read);
+.failure {
+    color: var(--failure);
 }

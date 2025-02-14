@@ -34,7 +34,7 @@ function addBookToPage(book) {
 
     const elemRead = document.createElement("div");
     elemRead.innerText = book.read ? "Read" : "Not Read";
-    elemRead.classList.add(book.read ? "read" : "not-read");
+    elemRead.classList.add(book.read ? "success" : "failure");
 
     const elemInfo = document.createElement("div");
     elemInfo.classList.add("info");
