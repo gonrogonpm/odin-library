@@ -22,12 +22,15 @@ body {
 
 .container {
     max-width: 1400px;
+    padding-left: var(--library-gap);
+    padding-right: var(--library-gap);
     margin: auto;
 }
 
 .logo {
     padding: 2em 0;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 1em;
 }
@@ -44,11 +47,11 @@ body {
 }
 
 #library {
-    --min-card-width: 200px;
+    --min-card-width: 240px;
     --max-card-width: calc(25% - var(--library-gap));
 
     display: grid;
-    grid-template-columns: repeat(auto-fill, max(var(--min-card-width), var(--max-card-width)));
+    grid-template-columns: repeat(auto-fit, minmax(max(var(--min-card-width), var(--max-card-width)), 1fr));
     gap: var(--library-gap);
 }
 
