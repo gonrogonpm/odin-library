@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --library-gap: 20px;
+    --book-corner: 20px;
+    --read: #4c9e52;
+    --not-read: #e5534b;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    font-size: 16px;
+    background-color: #151b23;
+    color: #d1d7e0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+}
+
+.logo {
+    padding: 2em 0;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.logo svg {
+    width: 50px;
+    height: 50px;
+    fill: #e5ebf5;
+}
+
+.logo h1 {
+    color: #e5ebf5;
+    font-size: 2.4rem;
+}
+
+.library {
+    --min-card-width: 200px;
+    --max-card-width: calc(25% - var(--library-gap));
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, max(var(--min-card-width), var(--max-card-width)));
+    gap: var(--library-gap);
+}
+
+.book {
+    background-color: #212830;
+    border-radius: var(--book-corner);
+    padding: 1.5rem 2rem;
+}
+
+.book h2 {
+    font-size: 1.5rem;
+}
+
+.book .author {
+    font-size: 1rem;
+    font-style: italic;
+}
+
+.book .info {
+    display: flex;
+    border-top: 1px solid #363e48;
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.book .info div:first-child {
+    flex-grow: 1;
+}
+
+.book .read {
+    color: var(--read); 
+}
+
+.book .not-read {
+    color: var(--not-read);
+}
