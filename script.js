@@ -119,13 +119,13 @@ function setupAddBookForm() {
 function setupBookDelete() {
     const elem = document.querySelector("#library");
     elem.addEventListener("click", event => {
-        const target = event.target;
+        const button = event.target.closest("button.delete");
         // Check if the target is a delete button.
-        if (target.tagName !== 'BUTTON' || !target.classList.contains("delete")) {
+        if (!button) {
             return;
         }
 
-        const index  = target.dataset.index;
+        const index  = button.dataset.index;
         const result = confirm(`Are you sure you want to delete the book "${library[index].title}"`);
 
         if (result) {
