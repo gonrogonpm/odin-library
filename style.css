@@ -67,6 +67,7 @@ input:focus {
 
 button svg {
     fill: var(--card-color);
+    pointer-events: none; /* Prevent SVG from becoming the event.target */
 }
 
 .container {
