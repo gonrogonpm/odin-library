@@ -56,6 +56,15 @@ input {
     padding: 0.4rem 0.8rem;
 }
 
+input:focus {
+    border: 1px solid var(--card-color);
+    outline: none;
+}
+
+.submitted input:invalid {
+    border: 1px solid var(--failure);
+}
+
 button svg {
     fill: var(--card-color);
 }

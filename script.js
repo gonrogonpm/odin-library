@@ -50,9 +50,52 @@ function addBookToPage(book) {
     document.querySelector("#library").appendChild(elemBook);
 }
 
+function clearAddBookForm() {
+    const form = document.querySelector("#add-book-form");
+    form.classList.remove("submitted");
+    form.reset();
+}
+
+function setupAddBookForm() {
+    // Button to open the form.
+    const buttonAdd = document.querySelector("#add-book-open");
+    buttonAdd.addEventListener("click", event => {
+        document.querySelector("#add-book-dialog").showModal();
+    });
+    // Button to cancel and close the form.
+    const buttonCancel = document.querySelector("#add-book-cancel");
+    buttonCancel.addEventListener("click", event => {
+        document.querySelector("#add-book-dialog").close();
+        clearAddBookForm();
+    });
+    // Button to submit (add).
+    const buttonSubmit = document.querySelector("#add-book-submit");
+    buttonSubmit.addEventListener("click", event => {
+        document.querySelector("#add-book-form").classList.add("submitted");
+    });
+    // Form submit.
+    document.querySelector("#add-book-form").addEventListener("submit", event => {
+        // Prevent the default submit behavior of the form.
+        event.preventDefault();
+
+        const data   = new FormData(event.target)
+        const title  = data.get("title");
+        const author = data.get("author");
+        const pages  = data.get("pages");
+        const read   = data.get("readStatus");
+
+        addBookToLibrary(title, author, pages, read === "yes" ? true : false);
+        addBookToPage(library[library.length - 1]);
+        // Reset the form and close the dialog.
+        clearAddBookForm();
+        document.querySelector("#add-book-dialog").close();
+    });
+}
+
 addBookToLibrary("The Hobbit", "J. R. R. Tolkien", 121, false);
 addBookToLibrary("The Lord of the Ring", "J. R. R. Tolkien", 410, false);
 addBookToLibrary("Gateway", "Frederik Pohl", 234, true);
 addBookToLibrary("Rendezvous With Rama", "Arthur C. Clarke", 342, true);
 addBookToLibrary("Ringworld", "Larry Niven", 212, true);
 addBooksToPage();
+setupAddBookForm();
