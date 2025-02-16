@@ -21,6 +21,16 @@ function addBookToPage(book) {
     if (!(book instanceof Book)) {
         throw Error("Argument must be a book object");
     }
+
+    const elemControls = document.createElement("div");
+    elemControls.classList.add("controls");
+    elemControls.innerHTML = `
+        <button>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <title>delete</title>
+                <path d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z" />
+            </svg>
+        </button>`;
   
     const elemTitle = document.createElement("h2");
     elemTitle.innerText = book.title;
@@ -46,6 +56,7 @@ function addBookToPage(book) {
     elemBook.appendChild(elemTitle);
     elemBook.appendChild(elemAuthor);
     elemBook.appendChild(elemInfo);
+    elemBook.appendChild(elemControls);
 
     document.querySelector("#library").appendChild(elemBook);
 }
