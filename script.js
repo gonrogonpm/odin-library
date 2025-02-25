@@ -13,168 +13,210 @@ const svgNotRead = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
     <title>not read</title>
     <path d="M22.54 16.88L20.41 19L22.54 21.12L21.12 22.54L19 20.41L16.88 22.54L15.47 21.12L17.59 19L15.47 16.88L16.88 15.47L19 17.59L21.12 15.47L22.54 16.88M12 9C10.34 9 9 10.34 9 12S10.34 15 12 15 15 13.66 15 12 13.66 9 12 9M12 17C9.24 17 7 14.76 7 12S9.24 7 12 7 17 9.24 17 12C17 12.5 16.9 13 16.77 13.43C17.46 13.16 18.21 13 19 13C20.12 13 21.17 13.32 22.07 13.85C22.43 13.27 22.74 12.65 23 12C21.27 7.61 17 4.5 12 4.5S2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C12.35 19.5 12.69 19.5 13.03 19.45C13 19.3 13 19.15 13 19C13 18.21 13.16 17.46 13.43 16.77C13 16.9 12.5 17 12 17Z" />
 </svg>`;
-// Array with the books.
-const library = [];
 
-function Book(title, author, pages, read) {
-    this.title = title;
-    this.author = author;
-    this.pages = Number(pages);
-    this.read = Boolean(read);
-}
+class Book {
+    constructor(title, author, pages, read) {
+        const p = Number(pages);
+        if (isNaN(p) || p < 0)
+        {
+            throw new TypeError("Invalid number of pages");
+        }
 
-Book.prototype.toggleRead = function() {
-    this.read = !this.read;
-}
-
-function addBookToLibrary(title, author, pages, read) {
-    library.push(new Book(title, author, pages, read));
-}
-
-function removeBookFromLibrary(index) {
-    library.splice(index, 1);
-}
-
-function addBooksToPage() {
-    library.forEach((book, index) => {
-        addBookToPage(book, index);
-    });
-}
-
-function addBookToPage(book, index = -1) {
-    if (!(book instanceof Book)) {
-        throw Error("Argument must be a book object");
+        this.title  = title;
+        this.author = author;
+        this.pages  = p;
+        this.read   = Boolean(read);
     }
 
-    const elemControls = document.createElement("div");
-    elemControls.classList.add("controls");
-    elemControls.innerHTML = `
-        <button title="Remove book" class="delete"${index >= 0 ? ` data-index="${index}"` : ""}>
-            ${svgDelete}
-        </button>
-        <button title="${book.read ? "Mark as unread" : "Mark as read"}" class="read-status"${index >= 0 ? ` data-index="${index}"` : ""}>
-            ${book.read ? svgNotRead : svgRead}
-        </button>
-    `;
-
-    const elemTitle = document.createElement("h2");
-    elemTitle.innerText = book.title;
-
-    const elemAuthor = document.createElement("div");
-    elemAuthor.classList.add("author");
-    elemAuthor.innerText = book.author;
-
-    const elemPages = document.createElement("div");
-    elemPages.innerText = `Pages: ${book.pages}`;
-
-    const elemRead = document.createElement("div");
-    elemRead.innerText = book.read ? "Read" : "Not Read";
-    elemRead.classList.add(book.read ? "success" : "failure");
-
-    const elemInfo = document.createElement("div");
-    elemInfo.classList.add("info");
-    elemInfo.appendChild(elemPages);
-    elemInfo.appendChild(elemRead);
-
-    const elemBook = document.createElement("div");
-    elemBook.classList.add("book");
-    elemBook.appendChild(elemTitle);
-    elemBook.appendChild(elemAuthor);
-    elemBook.appendChild(elemInfo);
-    elemBook.appendChild(elemControls);
-
-    document.querySelector("#library").appendChild(elemBook);
+    toggleRead() {
+        this.read = !this.read;
+    }
 }
 
-function syncPage() {
-    removeBooksFromPage();
-    addBooksToPage();
+class Library {
+    #books = [];
+
+    get count() {
+        return this.#books.length;
+    }
+
+    toggleRead(index) { 
+        this.#books[index].toggleRead();
+    }
+
+    getBook(index) {
+        return this.#books[index];
+    }
+
+    createBook(title, author, pages, read) {
+        this.addBook(new Book(title, author, pages, read));
+    }
+
+    addBook(book) {
+        this.#books.push(book);
+    }
+
+    removeBook(index) {
+        this.#books.splice(index, 1);
+    }
 }
 
-function removeBooksFromPage() {
-    document.querySelector("#library").replaceChildren();
+class Renderer {
+    sync(library) {
+        this.removeBooks();
+        this.addLibrary(library);
+    }
+
+    addLibrary(library) {
+        for (let i = 0; i < library.count; i++) {
+            this.addBook(i, library.getBook(i));
+        }
+    }
+
+    addBook(index, book) {
+        const elemControls = document.createElement("div");
+        elemControls.classList.add("controls");
+        elemControls.innerHTML = `
+            <button title="Remove book" class="delete"${index >= 0 ? ` data-index="${index}"` : ""}>
+                ${svgDelete}
+            </button>
+            <button title="${book.read ? "Mark as unread" : "Mark as read"}" class="read-status"${index >= 0 ? ` data-index="${index}"` : ""}>
+                ${book.read ? svgNotRead : svgRead}
+            </button>
+        `;
+    
+        const elemTitle = document.createElement("h2");
+        elemTitle.innerText = book.title;
+    
+        const elemAuthor = document.createElement("div");
+        elemAuthor.classList.add("author");
+        elemAuthor.innerText = book.author;
+    
+        const elemPages = document.createElement("div");
+        elemPages.innerText = `Pages: ${book.pages}`;
+    
+        const elemRead = document.createElement("div");
+        elemRead.innerText = book.read ? "Read" : "Not Read";
+        elemRead.classList.add(book.read ? "success" : "failure");
+    
+        const elemInfo = document.createElement("div");
+        elemInfo.classList.add("info");
+        elemInfo.appendChild(elemPages);
+        elemInfo.appendChild(elemRead);
+    
+        const elemBook = document.createElement("div");
+        elemBook.classList.add("book");
+        elemBook.appendChild(elemTitle);
+        elemBook.appendChild(elemAuthor);
+        elemBook.appendChild(elemInfo);
+        elemBook.appendChild(elemControls);
+
+        document.querySelector("#library").appendChild(elemBook);
+    }
+
+    removeBooks() {
+        document.querySelector("#library").replaceChildren();
+    }
+
+    clearBookForm() {
+        const form = document.querySelector("#add-book-form");
+        form.classList.remove("submitted");
+        form.reset();
+    }
 }
 
-function clearAddBookForm() {
-    const form = document.querySelector("#add-book-form");
-    form.classList.remove("submitted");
-    form.reset();
-}
+class App {
+    library = new Library();
 
-function setupAddBookForm() {
-    // Button to open the form.
-    const buttonAdd = document.querySelector("#add-book-open");
-    buttonAdd.addEventListener("click", event => {
-        document.querySelector("#add-book-dialog").showModal();
-    });
-    // Button to cancel and close the form.
-    const buttonCancel = document.querySelector("#add-book-cancel");
-    buttonCancel.addEventListener("click", event => {
-        document.querySelector("#add-book-dialog").close();
-        clearAddBookForm();
-    });
-    // Button to submit (add).
-    const buttonSubmit = document.querySelector("#add-book-submit");
-    buttonSubmit.addEventListener("click", event => {
-        document.querySelector("#add-book-form").classList.add("submitted");
-    });
-    // Form submit.
-    document.querySelector("#add-book-form").addEventListener("submit", event => {
-        // Prevent the default submit behavior of the form.
-        event.preventDefault();
+    renderer = null;
 
-        const data   = new FormData(event.target)
-        const title  = data.get("title");
-        const author = data.get("author");
-        const pages  = data.get("pages");
-        const read   = data.get("readStatus");
-
-        addBookToLibrary(title, author, pages, read === "yes" ? true : false);
-        addBookToPage(library[library.length - 1]);
-        // Reset the form and close the dialog.
-        syncPage();
-        document.querySelector("#add-book-dialog").close();
-    });
-}
-
-function setupBookDelete() {
-    const elem = document.querySelector("#library");
-    elem.addEventListener("click", event => {
-        const button = event.target.closest("button.delete");
-        if (!button) {
-            return;
+    constructor (renderer = null) {
+        this.renderer = renderer;
+        if (this.renderer === null) {
+            this.renderer = new Renderer();
         }
 
-        const index  = button.dataset.index;
-        const result = confirm(`Are you sure you want to delete the book "${library[index].title}"`);
+        this.#setupAddBookForm();
+        this.#setupBookDelete();
+        this.#setupBookReadStatus();
+    }
 
-        if (result) {
-            removeBookFromLibrary(index);
-            syncPage();
-        }
-    });
+    addTestBooks() {
+        this.library.createBook("The Hobbit", "J. R. R. Tolkien", 121, false);
+        this.library.createBook("The Lord of the Ring", "J. R. R. Tolkien", 410, false);
+        this.library.createBook("Gateway", "Frederik Pohl", 234, true);
+        this.library.createBook("Rendezvous With Rama", "Arthur C. Clarke", 342, true);
+        this.library.createBook("Ringworld", "Larry Niven", 212, true);
+        this.renderer.sync(this.library);
+    }
+
+    #setupAddBookForm() {
+        // Button to open the form to add a new book.
+        const buttonAdd = document.querySelector("#add-book-open");
+        buttonAdd.addEventListener("click", event => {
+            document.querySelector("#add-book-dialog").showModal();
+        });
+        // Button to cancel and close the form.
+        const buttonCancel = document.querySelector("#add-book-cancel");
+        buttonCancel.addEventListener("click", event => {
+            document.querySelector("#add-book-dialog").close();
+            renderer.clearBookForm();
+        });
+        // Button to submit (add).
+        const buttonSubmit = document.querySelector("#add-book-submit");
+        buttonSubmit.addEventListener("click", event => {
+            document.querySelector("#add-book-form").classList.add("submitted");
+        });
+        // Form submit.
+        document.querySelector("#add-book-form").addEventListener("submit", event => {
+            // Prevent the default submit behavior of the form.
+            event.preventDefault();
+
+            const data   = new FormData(event.target)
+            const title  = data.get("title");
+            const author = data.get("author");
+            const pages  = data.get("pages");
+            const read   = data.get("readStatus");
+
+            this.library.createBook(title, author, pages, read === "yes" ? true : false);
+            this.renderer.sync(this.library);
+            
+            document.querySelector("#add-book-dialog").close();
+        });
+    }
+
+    #setupBookDelete() {
+        const elem = document.querySelector("#library");
+        elem.addEventListener("click", event => {
+            const button = event.target.closest("button.delete");
+            if (!button) {
+                return;
+            }
+    
+            const index  = button.dataset.index;
+            const result = confirm(`Are you sure you want to delete the book "${this.library.getBook(index).title}"`);
+    
+            if (result) {
+                this.library.removeBook(index);
+                this.renderer.sync(this.library);
+            }
+        });
+    }
+
+    #setupBookReadStatus() {
+        const elem = document.querySelector("#library");
+        elem.addEventListener("click", event => {
+            const button = event.target.closest("button.read-status");
+            if (!button) {
+                return;
+            }
+    
+            const index = button.dataset.index;
+            console.dir(this);
+            this.library.toggleRead(index);
+            this.renderer.sync(this.library);
+        });
+    }
 }
 
-function setupBookReadStatus() {
-    const elem = document.querySelector("#library");
-    elem.addEventListener("click", event => {
-        const button = event.target.closest("button.read-status");
-        if (!button) {
-            return;
-        }
-
-        const index = button.dataset.index;
-        library[index].toggleRead();
-        syncPage();
-    });
-}
-
-addBookToLibrary("The Hobbit", "J. R. R. Tolkien", 121, false);
-addBookToLibrary("The Lord of the Ring", "J. R. R. Tolkien", 410, false);
-addBookToLibrary("Gateway", "Frederik Pohl", 234, true);
-addBookToLibrary("Rendezvous With Rama", "Arthur C. Clarke", 342, true);
-addBookToLibrary("Ringworld", "Larry Niven", 212, true);
-syncPage();
-setupAddBookForm();
-setupBookDelete();
-setupBookReadStatus();
+new App(new Renderer()).addTestBooks();
