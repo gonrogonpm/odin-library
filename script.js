@@ -160,7 +160,7 @@ class App {
         const buttonCancel = document.querySelector("#add-book-cancel");
         buttonCancel.addEventListener("click", event => {
             document.querySelector("#add-book-dialog").close();
-            renderer.clearBookForm();
+            this.renderer.clearBookForm();
         });
         // Button to submit (add).
         const buttonSubmit = document.querySelector("#add-book-submit");
@@ -169,9 +169,6 @@ class App {
         });
         // Form submit.
         document.querySelector("#add-book-form").addEventListener("submit", event => {
-            // Prevent the default submit behavior of the form.
-            event.preventDefault();
-
             const data   = new FormData(event.target)
             const title  = data.get("title");
             const author = data.get("author");
@@ -180,8 +177,7 @@ class App {
 
             this.library.createBook(title, author, pages, read === "yes" ? true : false);
             this.renderer.sync(this.library);
-            
-            document.querySelector("#add-book-dialog").close();
+            this.renderer.clearBookForm();
         });
     }
 
